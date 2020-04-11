@@ -24,11 +24,12 @@ pygame.display.set_caption("我的遊戲")
 
 # 設定一個開關供迴圈使用
 done = False
-
+x = 0
+y = 0
 # 創造一個clock控制畫面更新速度
 clock = pygame.time.Clock()
-background = pygame.image.load("saturn_family1.jpg")
-player = pygame.image.load("playerShip1_orange.png")
+background = pygame.image.load("20190930-3.jpg")
+player = pygame.image.load("b582e98778bce23577af9c32c0bf3412.png")
 # -------- 主要的程式迴圈 -----------
 while not done:
     # --- 事件迴圈 event loop
@@ -43,8 +44,18 @@ while not done:
     #       先將畫面塗滿底色(將原有畫面清掉)
     #       繪圖的程式要寫在這行後面，不然會被這行清掉
     screen.blit(background,(0,0))
-    x,y = pygame.mouse.get_pos()
+    
     screen.blit(player, (x,y))
+    key = pygame.key.get_pressed()
+    if key[pygame.K_LEFT]:
+        x -= 1
+    if key[pygame.K_RIGHT]:
+        x += 1
+    if key[pygame.K_DOWN]:
+        y += 1
+    if key[pygame.K_UP]:
+        y -= 1
+    
     
     # --- 更新畫面
     pygame.display.flip()
