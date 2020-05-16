@@ -81,12 +81,17 @@ class Pad(pygame.sprite.Sprite):  #滑板角色
         self.rect.x = int((screen.get_width() - self.rect.width)/2)  #滑板位置
         self.rect.y = screen.get_height() - self.rect.height - 20
  
-    def update(self):  #滑板位置隨滑鼠移動
+    def update(self):
+        pos = pygame.mouse.get_pos()  
+        self.rect.x = pos[0]  
+        if self.rect.x > screen.get_width() - self.rect.width:  
+            self.rect.x = screen.get_width() - self.rect.width
+        """#滑板位置隨滑鼠移動
         pos = pygame.mouse.get_pos()  #取得滑鼠坐標
         self.rect.x = pos[0]  #滑鼠x坐標
         if self.rect.x > screen.get_width() - self.rect.width:  #不要移出右邊界
             self.rect.x = screen.get_width() - self.rect.width
-
+"""
 def gameover(message):  #結束程式
     global running            
     text = font1.render(message, 1, (255,0,255))  #顯示訊息
@@ -132,7 +137,25 @@ while running:
     buttons = pygame.mouse.get_pressed()  #檢查滑鼠按鈕
     if buttons[0]:  #按滑鼠左鍵後球可移動
         playing = True
-    if playing == True:  #遊戲進行中
+    if playing:
+        screen.blit(background, (0,0)) 
+        fail = ball.update() 
+        if fail:  
+            gameover("lost!")
+        pad.update()  
+        hitbrick = pygame.sprite.spritecollide(ball, bricks, True)  
+        if len(hitbrick) > 0:  
+            score += len(hitbrick)  
+            soundhit.play()  
+            ball.rect.y += 20  
+            ball.bounceup()  
+            if len(bricks) == 0:  
+                gameover("win！")
+        hitpad = pygame.sprite.collide_rect(ball, pad)  
+        if hitpad: 
+            soundpad.play()  
+            ball.bounceup()  
+        """#遊戲進行中
         screen.blit(background, (0,0))  #清除繪圖視窗
         fail = ball.update()  #移動球體
         if fail:  #球出界
@@ -150,6 +173,7 @@ while running:
         if hitpad:  #球和滑板發生碰撞
             soundpad.play()  #球撞滑板聲
             ball.bounceup()  #球反彈
+            """
         allsprite.draw(screen)  #繪製所有角色
         msgstr = "得分：" + str(score)
     msg = font.render(msgstr, 1, (255,0,255))
