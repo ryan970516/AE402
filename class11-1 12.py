@@ -6,13 +6,13 @@
 import random
 import pygame
 from snake import SnakeBody,Food
-
+import time
 # 定義一些會用到的顏色
 # 常數使用大寫
 BLACK    = (   0,   0,   0)
 WHITE    = ( 255, 255, 255)
 GREEN    = (   0, 255,   0)
-RED      = ( 255,   0,   0)
+RED     = ( 255,   0,   0)
 BLUE     = (   0,   0, 255)
         
 
@@ -43,9 +43,12 @@ def addfood():
     food = Food(WHITE, x, y)
     
     foodGroup.add(food)
-
+font = pygame.font.Font(None, 50)
+text = font.render('Please press space to start', True, RED)
 for _ in range(5):
     addfood()
+    
+start = False
 # -------- 主要的程式迴圈 -----------
 while not done:
     # --- 事件迴圈 event loop
@@ -56,10 +59,27 @@ while not done:
     
     # --- 程式的運算與邏輯
     pressed = pygame.key.get_pressed()
+    
+    
+    if not pressed[pygame.K_SPACE] and not start:
+        screen.blit(text,(10,10))
+        pygame.display.flip()
+        continue
+    else:
+        start = True
+        
     snake.move(pressed)
+    
+    
     
     if snake.isOutOfRange() or snake.collideSelf():
         done = True 
+        font = pygame.font.Font(None, 50)
+        text = font.render('lost lost lost lost' , True, RED)
+        screen.blit(text,(20,20))
+        pygame.display.flip()
+        
+        continue
     
     if len(foodGroup) < 10:
         addfood()
@@ -76,11 +96,13 @@ while not done:
     foodGroup.draw(screen)
     #sprite.draw(screen)
     # --- 更新畫面
+   
     pygame.display.flip()
-
     # --- 每秒鐘60個frame
-    clock.tick(10)
+    clock.tick(5)
 
 # 關閉式窗並離開程式w
+
 pygame.quit()
+time.sleep(3)
 exit()
